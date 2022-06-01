@@ -1,0 +1,133 @@
+/*
+ * How to configure and pair two HC-05 Bluetooth Modules
+ * by Dejan Nedelkovski, www.HowToMechatronics.com
+ * 
+ *                 == SLAVE CODE ==
+ */
+ #include <Joystick.h>
+//#include <Servo.h>
+//#define button 8
+#define joyX A0
+#define joyY A1
+#define joyRZ A3
+#define joyThrottle A2
+#define joyButton1 9
+#define joyButton2 8
+#define joyButton3 7
+
+
+
+
+//Servo myServo;
+int state = 0;
+//int buttonState = 0;
+//int xAxis_ = 0;
+//int yAxis_ = 0;
+//int rzAxis_ = 0;
+int throttle_ = 0;
+
+int Btread1;
+
+int Btread2;
+
+int Btread3;
+
+
+
+  int lastButton1State = 0;
+  int lastButton2State = 0;
+  int lastButton3State = 0;
+//Joystick(Joystick HID ID, Joystick Type, Button Count, Hat Switch Count, Include X, Include Y, Include Z, Include Rx, Include Ry, Include Rz, Include Rudder, Include Throttle, Include Accelerator, Include Brake, Include Steering
+Joystick_ Joystick(0x12, JOYSTICK_TYPE_JOYSTICK, 3, 0,true,true,false,false,false,false,false,true,false,false,false);
+
+void setup() {
+ // pinMode(button, INPUT);
+ // myServo.attach(9);
+ pinMode(joyButton1, INPUT_PULLUP);
+  pinMode(joyButton2, INPUT_PULLUP);
+  pinMode(joyButton3, INPUT_PULLUP);
+Joystick.begin();
+  Serial1.begin(9600); // Default communication rate of the Bluetooth module
+}
+
+void loop() {
+ if(Serial1.available() > 0){ // Checks whether data is comming from the serial port
+    state = Serial1.read(); // Reads the data from the serial port
+ 
+//Serial.print("state:  ");
+//Serial.println((char)state);
+
+
+if((char)state=='a'){
+  Serial.print("state:  ");
+     Serial.println('a');
+     Btread1=1;
+}
+
+if((char)state=='b'){
+  Serial.print("state:  ");
+     Serial.println('b');
+     Btread1=0;
+  }
+
+
+if((char)state=='c'){
+  Serial.print("state:  ");
+     Serial.println('c');
+     Btread2=1;
+}
+
+if((char)state=='d'){
+  Serial.print("state:  ");
+     Serial.println('d');
+     Btread2=0;
+  }
+if((char)state=='e'){
+  Serial.print("state:  ");
+     Serial.println('e');
+     Btread3=1;
+}
+
+if((char)state=='f'){
+  Serial.print("state:  ");
+     Serial.println('f');
+     Btread3=0;
+  }
+ }
+//  xAxis_ = map(xAxis_,0,1023,0,255);
+//  //Set the Joystick X Axis value as the new, smoother, value
+//  Joystick.setXAxis(xAxis_);
+//
+//  yAxis_ = analogRead(joyY);
+//  yAxis_ = map(yAxis_,0,1023,0,255);
+//  Joystick.setYAxis(yAxis_);
+//
+//  rzAxis_ = analogRead(joyRZ);
+////  rzAxis_ = map(rzAxis_,0,1023,0,255);
+//  Joystick.setRzAxis(rzAxis_);
+//
+ // throttle_ = analogRead(joyThrottle);
+if(state<256)
+throttle_ = state;
+  //throttle_ = map(throttle_,0,1023,0,255);
+  Joystick.setThrottle(throttle_);
+  
+  int currentButton1State = !Btread1;
+  if (currentButton1State != lastButton1State){
+    Joystick.setButton(0, currentButton1State);
+    lastButton1State = currentButton1State;
+  }
+
+  int currentButton2State = !Btread2;
+  if (currentButton2State != lastButton2State){
+    Joystick.setButton(1, currentButton2State);
+    lastButton2State = currentButton2State;
+  }
+
+  int currentButton3State = !Btread3;
+  if (currentButton3State != lastButton3State){
+    Joystick.setButton(2, currentButton3State);
+    lastButton3State = currentButton3State;
+  }
+ delay(1);
+}

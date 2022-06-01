@@ -1,0 +1,96 @@
+/*
+ * 
+ *                 == MASTER CODE ==
+ */
+
+
+#include <Wire.h>
+#include <Adafruit_Sensor.h> 
+#include <Adafruit_ADXL345_U.h>
+#define joyButton1 9
+#define joyButton2 8
+#define joyButton3 7
+Adafruit_ADXL345_Unified accel = Adafruit_ADXL345_Unified();
+int state = 0;
+
+  int lastButton1State = 0;
+  int lastButton2State = 0;
+  int lastButton3State = 0;
+void setup(void) 
+{
+   Serial.begin(9600);  
+   Serial1.begin(9600);  
+   if(!accel.begin())
+   {
+      Serial.println("No ADXL345 sensor detected.");
+      while(1);
+   }
+}
+void loop(void) 
+{
+  if(Serial1.available() > 0){ // Checks whether data is comming from the serial port
+    state = Serial1.read(); // Reads the data from the serial port
+ }
+
+
+
+ int currentButton1State = !digitalRead(joyButton1);
+ if (currentButton1State != lastButton1State){
+  Serial.println("button 1:");
+  Serial.println(currentButton1State);
+     if(currentButton1State==0)
+     {
+      Serial.println('e');
+      Serial1.write('e');
+     }
+      if(currentButton1State==1)
+      {
+        Serial.println('f');
+      Serial1.write('f');
+      }
+delay(1);
+ lastButton1State = currentButton1State;
+  }
+
+ int currentButton2State = !digitalRead(joyButton2);
+  if (currentButton2State != lastButton2State){
+  Serial.println("button 2:");
+  Serial.println(currentButton2State);
+     if(currentButton2State==0)
+     {
+      Serial.println('c');
+      Serial1.write('c');
+     }
+      if(currentButton2State==1)
+      {
+        Serial.println('d');
+      Serial1.write('d');
+      }
+delay(1);
+    lastButton2State = currentButton2State;
+  }
+    int currentButton3State = !digitalRead(joyButton3);
+  if (currentButton3State != lastButton3State){
+    //Serial1.write(currentButton3State+700);   
+  Serial.println("button 3:");
+  Serial.println(currentButton3State);
+     if(currentButton3State==0)
+     {
+      Serial.println('a');
+      Serial1.write('a');
+     }
+      if(currentButton3State==1)
+      {
+        Serial.println('b');
+      Serial1.write('b');
+      }
+delay(1);
+    lastButton3State = currentButton3State;
+  }
+   sensors_event_t event; 
+   accel.getEvent(&event);
+   int potValueMapped = map(event.acceleration.x, -18, 9, 0, 255);
+   Serial1.write(potValueMapped);
+   //Serial.println(potValueMapped);
+   delay(1);
+}
